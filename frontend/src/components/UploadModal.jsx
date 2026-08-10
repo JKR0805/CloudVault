@@ -74,6 +74,7 @@ const UploadModal = ({ onClose, onUploadSuccess }) => {
             type="file" 
             ref={fileInputRef} 
             onChange={(e) => e.target.files && setFile(e.target.files[0])} 
+            onClick={(e) => (e.target.value = null)}
             style={{ display: 'none' }} 
             disabled={uploading}
           />
@@ -81,11 +82,21 @@ const UploadModal = ({ onClose, onUploadSuccess }) => {
           
           {file ? (
             <div>
-              <p style={{ color: 'var(--text-main)', fontWeight: '500', wordBreak: 'break-all' }}>{file.name}</p>
-              <p style={{ fontSize: '0.8rem' }}>{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+              <p style={{ color: 'var(--text-main)', fontWeight: '500', wordBreak: 'break-all', marginBottom: '5px' }}>{file.name}</p>
+              <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '10px' }}>{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+              <p style={{ fontSize: '0.8rem', color: 'var(--primary-color)' }}>Click to change file</p>
             </div>
           ) : (
-            <p>Drag and drop a file here, or click to browse</p>
+            <div>
+              <p style={{ marginBottom: '15px' }}>Drag and drop a file here, or click to browse</p>
+              <button 
+                className="btn btn-outline" 
+                style={{ pointerEvents: 'none' }} 
+                type="button"
+              >
+                Browse Files
+              </button>
+            </div>
           )}
         </div>
         
@@ -109,7 +120,7 @@ const UploadModal = ({ onClose, onUploadSuccess }) => {
           className="btn btn-primary" 
           style={{ width: '100%', padding: '12px' }}
         >
-          {uploading ? 'Uploading...' : 'Upload'}
+          {uploading ? 'Uploading...' : 'Confirm Upload'}
         </button>
       </div>
     </div>

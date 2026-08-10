@@ -10,6 +10,7 @@ const { errorHandler, notFoundHandler } = require('./middleware/error.middleware
 const healthRoutes = require('./routes/health.routes');
 const authRoutes = require('./routes/auth.routes');
 const fileRoutes = require('./routes/file.routes');
+const shareRoutes = require('./routes/share.routes');
 
 // ─── App ──────────────────────────────────────────
 const app = express();
@@ -26,6 +27,7 @@ const prefix = `/api/${API_VERSION}`;
 app.use(`${prefix}/health`, healthRoutes);
 app.use(`${prefix}/auth`, authRoutes);
 app.use(`${prefix}/files`, fileRoutes);
+app.use(`${prefix}/share`, shareRoutes);
 
 // ─── Error handling (must be last) ────────────────
 app.use(notFoundHandler);

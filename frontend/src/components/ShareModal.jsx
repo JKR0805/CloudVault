@@ -9,11 +9,11 @@ const ShareModal = ({ file, onClose }) => {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    const fetchUrl = async () => {
+    const generateShortLink = async () => {
       try {
-        const res = await apiClient.get(`/files/${file.id}/download`);
-        if (res.data.data.downloadUrl) {
-          setShareUrl(res.data.data.downloadUrl);
+        const res = await apiClient.post(`/share/${file.id}`);
+        if (res.data.data.shortCode) {
+          setShareUrl(`${window.location.origin}/s/${res.data.data.shortCode}`);
         } else {
           setError('Could not generate share link');
         }
@@ -24,7 +24,7 @@ const ShareModal = ({ file, onClose }) => {
         setLoading(false);
       }
     };
-    fetchUrl();
+    generateShortLink();
   }, [file.id]);
 
   const handleCopy = async () => {

@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
+import SharedDownload from './pages/SharedDownload';
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -30,6 +31,7 @@ function App() {
       <main className="container" style={{ padding: '40px 20px', flex: 1 }}>
         <Routes>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          <Route path="/s/:shortCode" element={<SharedDownload />} />
           <Route path="/login" element={
             <PublicRoute>
               <Login />
