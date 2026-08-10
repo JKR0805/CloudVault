@@ -138,3 +138,66 @@ a:hover {
   margin: 0 auto;
   padding: 0 20px;
 }
+
+/* Custom Component Styles */
+.navbar {
+  margin: 20px;
+  padding: 15px 30px;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 10px;
+  }
+  
+  .navbar {
+    margin: 10px;
+    padding: 15px;
+  }
+  
+  .navbar-user-name {
+    display: none;
+  }
+  
+  .navbar-logout-text {
+    display: none;
+  }
+  
+  .navbar-brand-text {
+    font-size: 1.1rem;
+  }
+  
+  .dashboard-header {
+    flex-direction: column;
+    align-items: stretch !important;
+    text-align: center;
+  }
+  
+  .dashboard-upload-btn {
+    width: 100%;
+  }
+  
+  .file-grid {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .glass-panel {
+    padding: 15px !important;
+  }
+  
+  .login-panel {
+    padding: 20px !important;
+    margin: 0 10px !important;
+  }
+  
+  .storage-stats-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 6px !important;
+  }
+  
+  .storage-stats-text {
+    font-size: 0.85rem !important;
+  }
+}

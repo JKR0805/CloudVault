@@ -1,10 +1,7 @@
-import { FileIcon, FileText, Image, Film, FileMusic, Download, Trash2, Edit2 } from 'lucide-react';
+import { FileIcon, FileText, Image, Film, FileMusic, Download, Trash2, Edit2, Eye, Share2 } from 'lucide-react';
 import apiClient from '../api/client';
-import { useState } from 'react';
 
-const FileCard = ({ file, onRefresh }) => {
-  const [isDeleting, setIsDeleting] = useState(false);
-  
+const FileCard = ({ file, onRefresh, onRenameRequest, onDeleteRequest, onPreviewRequest, onShareRequest }) => {
   const formatSize = (bytes) => {
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
@@ -32,37 +29,13 @@ const FileCard = ({ file, onRefresh }) => {
     }
   };
 
-  const handleDelete = async () => {
-    if (!window.confirm('Are you sure you want to delete this file?')) return;
-    setIsDeleting(true);
-    try {
-      await apiClient.delete(`/files/${file.id}`);
-      onRefresh();
-    } catch (error) {
-      console.error('Delete failed', error);
-      setIsDeleting(false);
-    }
-  };
-
-  const handleRename = async () => {
-    const newName = window.prompt('Enter new name (with extension):', file.original_name);
-    if (!newName || newName === file.original_name) return;
-    
-    try {
-      await apiClient.patch(`/files/${file.id}`, { name: newName });
-      onRefresh();
-    } catch (error) {
-      console.error('Rename failed', error);
-    }
-  };
-
   return (
     <div className="glass-panel" style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '15px' }}>
       <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
-        <div style={{ padding: '12px', background: 'rgba(255,255,255,0.05)', borderRadius: '12px' }}>
+        <div style={{ padding: '12px', background: 'rgba(255,255,255,0.05)', borderRadius: '12px', flexShrink: 0 }}>
           {getIcon(file.mime_type)}
         </div>
-        <div style={{ overflow: 'hidden' }}>
+        <div style={{ overflow: 'hidden', flex: 1 }}>
           <h4 style={{ margin: 0, textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }} title={file.original_name}>
             {file.original_name}
           </h4>
@@ -72,14 +45,20 @@ const FileCard = ({ file, onRefresh }) => {
         </div>
       </div>
       
-      <div style={{ display: 'flex', gap: '10px', marginTop: 'auto' }}>
-        <button onClick={handleDownload} className="btn btn-primary" style={{ flex: 1, padding: '8px' }} title="Download">
+      <div style={{ display: 'flex', gap: '8px', marginTop: 'auto', flexWrap: 'wrap' }}>
+        <button onClick={() => onPreviewRequest(file)} className="btn btn-primary" style={{ flex: 1, padding: '8px' }} title="Preview">
+          <Eye size={16} />
+        </button>
+        <button onClick={handleDownload} className="btn btn-outline" style={{ padding: '8px' }} title="Download">
           <Download size={16} />
         </button>
-        <button onClick={handleRename} className="btn btn-outline" style={{ padding: '8px' }} title="Rename">
+        <button onClick={() => onShareRequest(file)} className="btn btn-outline" style={{ padding: '8px' }} title="Share">
+          <Share2 size={16} />
+        </button>
+        <button onClick={() => onRenameRequest(file)} className="btn btn-outline" style={{ padding: '8px' }} title="Rename">
           <Edit2 size={16} />
         </button>
-        <button onClick={handleDelete} className="btn btn-danger" style={{ padding: '8px' }} disabled={isDeleting} title="Delete">
+        <button onClick={() => onDeleteRequest(file)} className="btn btn-danger" style={{ padding: '8px' }} title="Delete">
           <Trash2 size={16} />
         </button>
       </div>

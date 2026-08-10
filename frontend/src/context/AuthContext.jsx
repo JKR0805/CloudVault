@@ -41,6 +41,11 @@ export const AuthProvider = ({ children }) => {
     return res.data;
   };
 
+  const resetPassword = async (email) => {
+    const res = await apiClient.post('/auth/reset-password', { email });
+    return res.data;
+  };
+
   const logout = async () => {
     try {
       await apiClient.post('/auth/logout');
@@ -52,7 +57,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, signup, logout, fetchMe }}>
+    <AuthContext.Provider value={{ user, loading, login, signup, logout, fetchMe, resetPassword }}>
       {children}
     </AuthContext.Provider>
   );
