@@ -35,11 +35,11 @@ const FileCard = ({ file, onRefresh, onRenameRequest, onDeleteRequest, onPreview
         <div style={{ padding: '12px', background: 'rgba(255,255,255,0.05)', borderRadius: '12px', flexShrink: 0 }}>
           {getIcon(file.mime_type)}
         </div>
-        <div style={{ overflow: 'hidden', flex: 1 }}>
+        <div style={{ overflow: 'hidden', flex: 1, minWidth: 0 }}>
           <h4 style={{ margin: 0, textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }} title={file.original_name}>
             {file.original_name}
           </h4>
-          <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+          <span style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-muted)', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
             {formatSize(file.size)} • {new Date(file.created_at).toLocaleDateString()}
           </span>
         </div>
@@ -49,16 +49,16 @@ const FileCard = ({ file, onRefresh, onRenameRequest, onDeleteRequest, onPreview
         <button onClick={() => onPreviewRequest(file)} className="btn btn-primary" style={{ flex: 1, padding: '8px' }} title="Preview">
           <Eye size={16} />
         </button>
-        <button onClick={handleDownload} className="btn btn-outline" style={{ padding: '8px' }} title="Download">
+        <button onClick={handleDownload} className="btn btn-outline" style={{ flex: 1, padding: '8px' }} title="Download">
           <Download size={16} />
         </button>
-        <button onClick={() => onShareRequest(file)} className="btn btn-outline" style={{ padding: '8px' }} title="Share">
+        <button onClick={() => onShareRequest(file)} className="btn btn-outline" style={{ flex: 1, padding: '8px' }} title="Share">
           <Share2 size={16} />
         </button>
-        <button onClick={() => onRenameRequest(file)} className="btn btn-outline" style={{ padding: '8px' }} title="Rename">
+        <button onClick={() => onRenameRequest(file)} className="btn btn-outline" style={{ flex: 1, padding: '8px' }} title="Rename">
           <Edit2 size={16} />
         </button>
-        <button onClick={() => onDeleteRequest(file)} className="btn btn-danger" style={{ padding: '8px' }} title="Delete">
+        <button onClick={() => onDeleteRequest(file)} className="btn btn-danger" style={{ flex: 1, padding: '8px' }} title="Delete">
           <Trash2 size={16} />
         </button>
       </div>

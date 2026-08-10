@@ -122,7 +122,7 @@ const Dashboard = () => {
           </button>
         </div>
       ) : (
-        <div className="file-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
+        <div className="file-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))', gap: '20px' }}>
           {files.map(file => (
             <FileCard 
               key={file.id} 
