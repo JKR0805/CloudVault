@@ -23,9 +23,9 @@ create table if not exists public.profiles (
   -- ── Storage quotas ──────────────────────────────────────────────────────
   -- storage_used:  running counter in bytes, updated by the backend on
   --               every upload / delete via file.service._updateStorageUsed()
-  -- storage_limit: per-user quota in bytes (default 100 MB)
+  -- storage_limit: per-user quota in bytes (default 1 GB)
   storage_used   bigint   not null default 0,
-  storage_limit  bigint   not null default 104857600,   -- 100 * 1024 * 1024
+  storage_limit  bigint   not null default 1073741824,   -- 1 * 1024 * 1024 * 1024
 
   -- ── Timestamps ──────────────────────────────────────────────────────────
   created_at  timestamptz not null default now(),
@@ -46,4 +46,4 @@ comment on column public.profiles.id               is 'FK → auth.users(id). Se
 comment on column public.profiles.full_name        is 'User-chosen display name.';
 comment on column public.profiles.avatar_url       is 'URL to the user''s avatar image.';
 comment on column public.profiles.storage_used     is 'Running total of storage consumed (bytes).';
-comment on column public.profiles.storage_limit    is 'Per-user storage quota (bytes). Default 100 MB.';
+comment on column public.profiles.storage_limit    is 'Per-user storage quota (bytes). Default 1 GB.';
