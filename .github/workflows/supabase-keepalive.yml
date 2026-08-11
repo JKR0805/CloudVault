@@ -1,0 +1,34 @@
+name: Supabase Keep Alive
+
+on:
+  schedule:
+    # Run once a day at 9:00 AM IST (03:30 UTC)
+    - cron: "30 3 * * *"
+  workflow_dispatch:
+
+jobs:
+  keep-alive:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Ping Supabase
+        run: |
+          echo "Pinging Supabase to prevent inactivity pause..."
+          
+          # We use curl with -s (silent), -o /dev/null (hide body), 
+          # and -w "%{http_code}" to get the HTTP status code for validation.
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            "${SUPABASE_URL}/rest/v1/supabase_keepalive?select=id&limit=1" \
+            -H "apikey: ${SUPABASE_ANON_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_ANON_KEY}")
+            
+          if [ "$HTTP_STATUS" -eq 200 ]; then
+            echo "Successfully pinged Supabase (HTTP 200). Project is active."
+          else
+            echo "Failed to ping Supabase. HTTP Status: $HTTP_STATUS"
+            # Explicitly fail the workflow
+            exit 1
+          fi
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
