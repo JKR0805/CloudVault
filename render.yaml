@@ -2,7 +2,7 @@ services:
   - type: web
     name: cloudvault-backend
     env: docker
-    region: oregon # or your preferred region
+    region: singapore # or your preferred region
     plan: free # or standard, pro, etc.
     rootDir: backend # This tells Render where to find the Dockerfile
     # Render automatically uses the Dockerfile in rootDir when env is set to docker
