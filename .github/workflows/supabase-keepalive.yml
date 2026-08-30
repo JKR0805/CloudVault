@@ -4,7 +4,7 @@ on:
   schedule:
     # Run once a day at 9:00 AM IST (03:30 UTC)
     - cron: "30 3 * * *"
-  workflow_dispatch:
+  workflow_dispatch: # Allows manual trigger from GitHub Actions tab
 
 jobs:
   keep-alive:
@@ -13,20 +13,53 @@ jobs:
     steps:
       - name: Ping Supabase
         run: |
-          echo "Pinging Supabase to prevent inactivity pause..."
-          
-          # We use curl with -s (silent), -o /dev/null (hide body), 
-          # and -w "%{http_code}" to get the HTTP status code for validation.
-          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
-            "${SUPABASE_URL}/rest/v1/supabase_keepalive?select=id&limit=1" \
+          # 1. Validate secrets
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_ANON_KEY" ]; then
+            echo "::error::SUPABASE_URL or SUPABASE_ANON_KEY secret is missing or empty!"
+            echo "Please configure SUPABASE_URL and SUPABASE_ANON_KEY in your GitHub Repository: Settings -> Secrets and variables -> Actions."
+            exit 1
+          fi
+
+          # 2. Normalize URL (strip trailing slash if present)
+          CLEAN_URL="${SUPABASE_URL%/}"
+
+          echo "Pinging Supabase keep-alive endpoint..."
+
+          # 3. Make HTTP request capturing status code and body
+          RESPONSE_FILE=$(mktemp)
+          HTTP_STATUS=$(curl -sSL -w "%{http_code}" -o "$RESPONSE_FILE" \
+            "${CLEAN_URL}/rest/v1/supabase_keepalive?select=id&limit=1" \
             -H "apikey: ${SUPABASE_ANON_KEY}" \
             -H "Authorization: Bearer ${SUPABASE_ANON_KEY}")
-            
+          
+          RESPONSE_BODY=$(cat "$RESPONSE_FILE")
+          rm -f "$RESPONSE_FILE"
+
+          echo "HTTP Status: $HTTP_STATUS"
+
+          # 4. Check status code
           if [ "$HTTP_STATUS" -eq 200 ]; then
             echo "Successfully pinged Supabase (HTTP 200). Project is active."
+            echo "Response: $RESPONSE_BODY"
           else
-            echo "Failed to ping Supabase. HTTP Status: $HTTP_STATUS"
-            # Explicitly fail the workflow
+            echo "::error::Failed to ping Supabase. HTTP Status: $HTTP_STATUS"
+            echo "Response Body: $RESPONSE_BODY"
+            echo ""
+            echo "=== TROUBLESHOOTING HELP ==="
+            if [ "$HTTP_STATUS" -eq 503 ]; then
+              echo "- Status 503: The Supabase project is already PAUSED."
+              echo "  Action: You must log in to the Supabase Dashboard and manually click 'Restore project'. Keep-alive pings only prevent pausing; they cannot wake an already paused project."
+            elif [ "$HTTP_STATUS" -eq 404 ]; then
+              echo "- Status 404: The 'supabase_keepalive' table was not found."
+              echo "  Action: Run 'sql/09_supabase_keepalive.sql' in your Supabase SQL Editor."
+            elif [ "$HTTP_STATUS" -eq 401 ] || [ "$HTTP_STATUS" -eq 403 ]; then
+              echo "- Status 401/403: Authentication or permission issue."
+              echo "  Action: Verify SUPABASE_ANON_KEY secret and ensure the RLS SELECT policy is created on 'supabase_keepalive'."
+            elif [ "$HTTP_STATUS" -eq 000 ]; then
+              echo "- Status 000: Connection failed or invalid domain."
+              echo "  Action: Verify SUPABASE_URL secret (e.g., https://your-project.supabase.co)."
+            fi
+            echo "============================"
             exit 1
           fi
         env:
